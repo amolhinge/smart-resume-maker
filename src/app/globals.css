@@ -177,7 +177,11 @@
   font-family:
     "Noto Sans Devanagari", "Noto Sans", "Geist", ui-sans-serif, system-ui,
     sans-serif;
+  font-size: 12.4px;
+  line-height: 1.6;
   overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -187,6 +191,42 @@
 .resume-sheet h3,
 .resume-sheet p {
   overflow-wrap: break-word;
+}
+
+.resume-sheet h1,
+.resume-sheet h2,
+.resume-sheet h3 {
+  break-after: avoid;
+}
+
+.resume-sheet p,
+.resume-sheet li {
+  orphans: 2;
+  widows: 2;
+}
+
+/* Devanagari reads better with extra leading and tighter tracking. */
+.resume-sheet:lang(hi),
+.resume-sheet:lang(mr) {
+  line-height: 1.72;
+}
+
+.resume-sheet:lang(hi) p,
+.resume-sheet:lang(hi) li,
+.resume-sheet:lang(mr) p,
+.resume-sheet:lang(mr) li {
+  line-height: 1.72;
+}
+
+.resume-sheet:lang(hi) h1,
+.resume-sheet:lang(hi) h2,
+.resume-sheet:lang(hi) h3,
+.resume-sheet:lang(mr) h1,
+.resume-sheet:lang(mr) h2,
+.resume-sheet:lang(mr) h3,
+.resume-sheet:lang(hi) .uppercase,
+.resume-sheet:lang(mr) .uppercase {
+  letter-spacing: 0.08em;
 }
 
 .resume-section {
@@ -220,7 +260,7 @@ nextjs-portal {
   }
   .resume-sheet {
     width: 210mm !important;
-    min-height: 0 !important;
+    min-height: 297mm !important;
     margin: 0 !important;
     box-shadow: none !important;
     border: 0 !important;

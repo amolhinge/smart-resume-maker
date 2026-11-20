@@ -70,7 +70,7 @@ export function PrintView({ id, initialMode }: { id: string; initialMode: DocMod
     );
   }
 
-  const printCss = `@page{size:A4;margin:0}@media print{html,body{background:#fff!important;margin:0!important;padding:0!important}.no-print{display:none!important}.print-root{min-height:0!important;background:#fff!important;padding:0!important}.resume-sheet{width:210mm!important;min-height:0!important;margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important}}`;
+  const printCss = `@page{size:A4;margin:0}@media print{html,body{background:#fff!important;margin:0!important;padding:0!important}.no-print{display:none!important}.print-root{min-height:0!important;background:#fff!important;padding:0!important}.resume-sheet{width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important}}`;
 
   return (
     <div className="print-root min-h-dvh bg-slate-200/80">

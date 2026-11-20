@@ -147,6 +147,44 @@ function Pills({
   );
 }
 
+function Avatar({
+  src,
+  name,
+  accent,
+  className,
+}: {
+  src?: string;
+  name?: string;
+  accent: string;
+  className?: string;
+}) {
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt=""
+        className={cn("shrink-0 bg-white object-cover object-top", className)}
+      />
+    );
+  }
+  const initials = (name || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => s[0]?.toUpperCase())
+    .join("");
+  if (!initials) return null;
+  return (
+    <div
+      className={cn("flex shrink-0 items-center justify-center font-bold text-white", className)}
+      style={{ backgroundColor: accent }}
+    >
+      {initials}
+    </div>
+  );
+}
+
 function ExpItems({
   resume,
   lang,
@@ -166,29 +204,33 @@ function ExpItems({
 }) {
   const t = (k: TKey) => translate(lang, k);
   return (
-    <div className={dense ? "space-y-2.5" : "space-y-4"}>
+    <div className={dense ? "space-y-3" : "space-y-5"}>
       {resume.experience.map((e) => (
         <div key={e.id} className={cn("resume-section", timeline && "relative pl-4")}>
           {timeline && (
             <span
-              className="absolute left-0 top-[6px] h-[7px] w-[7px] rounded-full"
+              className="absolute left-0 top-[7px] h-[7px] w-[7px] rounded-full"
               style={{ backgroundColor: accent }}
             />
           )}
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className={cn("text-[13px] font-semibold leading-5", titleClass)}>
-              {e.role || t("build.role")}
-            </h3>
+            {e.role && (
+              <h3 className={cn("text-[14px] font-semibold leading-[1.45]", titleClass)}>
+                {e.role}
+              </h3>
+            )}
             {(e.startDate || e.endDate || e.current) && (
-              <span className="shrink-0 text-[10.5px] font-medium" style={{ color: muted }}>
+              <span className="ml-auto shrink-0 text-[11px] font-medium tabular-nums" style={{ color: muted }}>
                 {range(e.startDate, e.endDate, e.current, t("common.present"), lang)}
               </span>
             )}
           </div>
-          <p className="text-[11.5px] font-medium" style={{ color: accent }}>
-            {[e.company, e.location].filter(Boolean).join(" · ")}
-          </p>
-          <Bullets text={e.description} className="mt-1 text-[11.5px] leading-[1.55]" accent={accent} />
+          {(e.company || e.location) && (
+            <p className="text-[12px] font-medium leading-[1.45]" style={{ color: accent }}>
+              {[e.company, e.location].filter(Boolean).join(" · ")}
+            </p>
+          )}
+          <Bullets text={e.description} className="mt-1.5 text-[12px] leading-[1.62]" accent={accent} />
         </div>
       ))}
     </div>
@@ -208,27 +250,30 @@ function EduItems({
   muted: string;
   dense?: boolean;
 }) {
-  const t = (k: TKey) => translate(lang, k);
   return (
-    <div className={dense ? "space-y-2" : "space-y-3"}>
+    <div className={dense ? "space-y-2.5" : "space-y-4"}>
       {resume.education.map((e) => (
         <div key={e.id} className="resume-section">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="text-[12.5px] font-semibold leading-5">
-              {e.degree || t("build.degree")}
-            </h3>
+            {e.degree && (
+              <h3 className="text-[13.5px] font-semibold leading-[1.45]">{e.degree}</h3>
+            )}
             {(e.startYear || e.endYear) && (
-              <span className="shrink-0 text-[10.5px]" style={{ color: muted }}>
+              <span className="ml-auto shrink-0 text-[11px] tabular-nums" style={{ color: muted }}>
                 {[e.startYear, e.endYear].filter(Boolean).join(" — ")}
               </span>
             )}
           </div>
-          <p className="text-[11.5px] leading-4" style={{ color: accent }}>
-            {e.institution}
-          </p>
-          <p className="text-[10.5px]" style={{ color: muted }}>
-            {[e.field, e.score].filter(Boolean).join(" · ")}
-          </p>
+          {e.institution && (
+            <p className="text-[12px] leading-[1.45]" style={{ color: accent }}>
+              {e.institution}
+            </p>
+          )}
+          {(e.field || e.score) && (
+            <p className="mt-0.5 text-[11px] leading-[1.45]" style={{ color: muted }}>
+              {[e.field, e.score].filter(Boolean).join(" · ")}
+            </p>
+          )}
         </div>
       ))}
     </div>
@@ -250,14 +295,16 @@ function Name({
   className?: string;
   roleClass?: string;
 }) {
+  const { fullName, jobTitle } = resume.personal;
+  if (!fullName && !jobTitle) return null;
   return (
     <>
-      <h1 className={cn("font-bold leading-tight", className)}>
-        {resume.personal.fullName || translate(lang, "resume.yourName")}
-      </h1>
-      <p className={cn("mt-0.5 text-[13px] font-medium", roleClass)}>
-        {resume.personal.jobTitle || translate(lang, "resume.yourRole")}
-      </p>
+      {fullName && (
+        <h1 className={cn("font-bold leading-[1.15]", className)}>{fullName}</h1>
+      )}
+      {jobTitle && (
+        <p className={cn("mt-1 text-[14px] font-medium", roleClass)}>{jobTitle}</p>
+      )}
     </>
   );
 }
@@ -278,7 +325,15 @@ function Classic({ resume, lang }: DocProps) {
   return (
     <Sheet className="px-14 py-12">
       <header className="text-center">
-        <Name resume={resume} lang={lang} className="text-[32px] tracking-tight" roleClass="uppercase tracking-[0.24em] text-[11px] text-slate-500" />
+        {resume.personal.photo && (
+          <Avatar
+            src={resume.personal.photo}
+            name={resume.personal.fullName}
+            accent={a}
+            className="mx-auto mb-5 h-[96px] w-[96px] rounded-full border-4 border-white shadow-[0_6px_18px_rgba(15,23,42,0.16)] ring-1 ring-slate-200"
+          />
+        )}
+        <Name resume={resume} lang={lang} className="text-[36px] tracking-tight" roleClass="uppercase tracking-[0.24em] text-[12px] text-slate-500" />
         <Contact resume={resume} className="mt-3 justify-center text-slate-600" />
       </header>
       <div className="my-5 border-t-2 border-slate-800" />
@@ -335,53 +390,71 @@ function Modern({ resume, lang }: DocProps) {
   const a = meta.accent;
   const soft = meta.soft;
   return (
-    <Sheet className="flex">
-      <aside className="w-[255px] shrink-0 px-7 py-10" style={{ backgroundColor: soft }}>
-        {resume.personal.photo ? (
-          <img
-            src={resume.personal.photo}
-            alt=""
-            className="mb-6 h-24 w-24 rounded-full border-4 border-white object-cover"
-          />
-        ) : (
-          <div
-            className="mb-6 flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white"
-            style={{ backgroundColor: a }}
-          >
-            {(resume.personal.fullName || "Y").slice(0, 1).toUpperCase()}
-          </div>
+    <Sheet className="flex flex-row-reverse">
+      {/* Main content comes first in the DOM so ATS parsers read the name and roles before the sidebar. */}
+      <div className="min-w-0 flex-1 px-9 py-11">
+        <Name resume={resume} lang={lang} className="text-[34px]" roleClass="text-[14px] font-semibold" />
+        <div className="mt-3 h-[3px] w-12 rounded-full" style={{ backgroundColor: a }} />
+        {resume.personal.summary && (
+          <section className="resume-section mt-6">
+            <p className="text-[12px] leading-[1.68] text-slate-700 whitespace-pre-line">{resume.personal.summary}</p>
+          </section>
         )}
-        <h2 className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: a }}>
+        {resume.experience.length > 0 && (
+          <section className="mt-7">
+            <h2 className="mb-3 text-[11.5px] font-bold uppercase tracking-[0.16em]" style={{ color: a }}>
+              {t("resume.experience")}
+            </h2>
+            <ExpItems resume={resume} lang={lang} accent={a} muted="#64748b" />
+          </section>
+        )}
+        {resume.education.length > 0 && (
+          <section className="mt-7">
+            <h2 className="mb-3 text-[11.5px] font-bold uppercase tracking-[0.16em]" style={{ color: a }}>
+              {t("resume.education")}
+            </h2>
+            <EduItems resume={resume} lang={lang} accent={a} muted="#64748b" />
+          </section>
+        )}
+      </div>
+      <aside className="w-[255px] shrink-0 px-7 py-11" style={{ backgroundColor: soft }}>
+        <Avatar
+          src={resume.personal.photo}
+          name={resume.personal.fullName}
+          accent={a}
+          className="mb-6 h-[112px] w-[112px] rounded-full border-4 border-white text-3xl shadow-[0_6px_18px_rgba(15,23,42,0.16)]"
+        />
+        <h2 className="mb-2.5 text-[10.5px] font-bold uppercase tracking-[0.18em]" style={{ color: a }}>
           {t("resume.contact")}
         </h2>
-        <div className="space-y-2.5 text-[10.5px] leading-[1.5] text-slate-700">
+        <div className="space-y-2.5 text-[11.5px] leading-[1.55] text-slate-700">
           {resume.personal.phone && (
             <div className="flex gap-2">
-              <Phone size={11} className="mt-[3px] shrink-0" style={{ color: a }} />
+              <Phone size={12} className="mt-[3px] shrink-0" style={{ color: a }} />
               <span>{resume.personal.phone}</span>
             </div>
           )}
           {resume.personal.email && (
             <div className="flex gap-2">
-              <Mail size={11} className="mt-[3px] shrink-0" style={{ color: a }} />
+              <Mail size={12} className="mt-[3px] shrink-0" style={{ color: a }} />
               <span className="break-all">{resume.personal.email}</span>
             </div>
           )}
           {locationOf(resume) && (
             <div className="flex gap-2">
-              <MapPin size={11} className="mt-[3px] shrink-0" style={{ color: a }} />
+              <MapPin size={12} className="mt-[3px] shrink-0" style={{ color: a }} />
               <span>{locationOf(resume)}</span>
             </div>
           )}
         </div>
         {resume.skills.length > 0 && (
           <>
-            <h2 className="mb-2 mt-7 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: a }}>
+            <h2 className="mb-2.5 mt-8 text-[10.5px] font-bold uppercase tracking-[0.18em]" style={{ color: a }}>
               {t("resume.skills")}
             </h2>
             <div className="flex flex-wrap gap-1.5">
               {resume.skills.map((s) => (
-                <span key={s} className="rounded bg-white px-2 py-[3px] text-[10px] font-medium text-slate-700">
+                <span key={s} className="rounded bg-white px-2 py-[3px] text-[10.5px] font-medium text-slate-700">
                   {s}
                 </span>
               ))}
@@ -390,18 +463,18 @@ function Modern({ resume, lang }: DocProps) {
         )}
         {resume.languagesKnown.length > 0 && (
           <>
-            <h2 className="mb-2 mt-7 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: a }}>
+            <h2 className="mb-2.5 mt-8 text-[10.5px] font-bold uppercase tracking-[0.18em]" style={{ color: a }}>
               {t("resume.languages")}
             </h2>
-            <p className="text-[10.5px] leading-[1.7] text-slate-700">{resume.languagesKnown.join(", ")}</p>
+            <p className="text-[11px] leading-[1.7] text-slate-700">{resume.languagesKnown.join(", ")}</p>
           </>
         )}
         {resume.achievements.length > 0 && (
           <>
-            <h2 className="mb-2 mt-7 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: a }}>
+            <h2 className="mb-2.5 mt-8 text-[10.5px] font-bold uppercase tracking-[0.18em]" style={{ color: a }}>
               {t("resume.achievements")}
             </h2>
-            <ul className="space-y-1.5 text-[10.5px] leading-[1.5] text-slate-700">
+            <ul className="space-y-1.5 text-[11px] leading-[1.55] text-slate-700">
               {resume.achievements.map((x, ai) => (
                 <li key={`${x}-${ai}`} className="flex gap-1.5">
                   <span style={{ color: a }}>•</span>
@@ -412,31 +485,6 @@ function Modern({ resume, lang }: DocProps) {
           </>
         )}
       </aside>
-      <div className="flex-1 px-8 py-10">
-        <Name resume={resume} lang={lang} className="text-[30px]" roleClass="text-[12.5px] font-semibold" />
-        <div className="mt-3 h-[3px] w-12 rounded-full" style={{ backgroundColor: a }} />
-        {resume.personal.summary && (
-          <section className="resume-section mt-5">
-            <p className="text-[11.5px] leading-[1.65] text-slate-700 whitespace-pre-line">{resume.personal.summary}</p>
-          </section>
-        )}
-        {resume.experience.length > 0 && (
-          <section className="mt-6">
-            <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: a }}>
-              {t("resume.experience")}
-            </h2>
-            <ExpItems resume={resume} lang={lang} accent={a} muted="#64748b" />
-          </section>
-        )}
-        {resume.education.length > 0 && (
-          <section className="mt-6">
-            <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: a }}>
-              {t("resume.education")}
-            </h2>
-            <EduItems resume={resume} lang={lang} accent={a} muted="#64748b" />
-          </section>
-        )}
-      </div>
     </Sheet>
   );
 }
@@ -514,19 +562,26 @@ function Executive({ resume, lang }: DocProps) {
   );
   return (
     <Sheet>
-      <header className="px-14 py-10 text-white" style={{ backgroundColor: "#292524" }}>
+      <header className="px-14 py-11 text-white" style={{ backgroundColor: "#292524" }}>
         <div className="flex items-center gap-6">
-          {resume.personal.photo && (
-            <img src={resume.personal.photo} alt="" className="h-[86px] w-[86px] rounded-full border-2 border-white/30 object-cover" />
-          )}
-          <div>
-            <h1 className="text-[32px] font-semibold leading-tight tracking-tight">
-              {resume.personal.fullName || t("resume.yourName")}
-            </h1>
-            <p className="mt-1 text-[12.5px] font-medium tracking-wide text-white/70">
-              {resume.personal.jobTitle || t("resume.yourRole")}
-            </p>
-            <Contact resume={resume} className="mt-3 text-white/70" iconClassName="text-white/50" />
+          <Avatar
+            src={resume.personal.photo}
+            name={resume.personal.fullName}
+            accent={a}
+            className="h-[104px] w-[104px] rounded-full border-2 border-white/40 text-3xl shadow-[0_6px_18px_rgba(0,0,0,0.25)]"
+          />
+          <div className="min-w-0">
+            {resume.personal.fullName && (
+              <h1 className="text-[36px] font-semibold leading-[1.15] tracking-tight">
+                {resume.personal.fullName}
+              </h1>
+            )}
+            {resume.personal.jobTitle && (
+              <p className="mt-1 text-[14px] font-medium tracking-wide text-white/75">
+                {resume.personal.jobTitle}
+              </p>
+            )}
+            <Contact resume={resume} className="mt-3 text-white/75" iconClassName="text-white/50" />
           </div>
         </div>
       </header>
@@ -598,20 +653,23 @@ function Creative({ resume, lang }: DocProps) {
       <header className="relative overflow-hidden px-12 pb-10 pt-12" style={{ backgroundColor: soft }}>
         <div className="absolute -right-10 -top-16 h-52 w-52 rounded-full opacity-10" style={{ backgroundColor: a }} />
         <div className="relative flex items-center gap-6">
-          {resume.personal.photo ? (
-            <img src={resume.personal.photo} alt="" className="h-[100px] w-[100px] rounded-2xl border-4 border-white object-cover shadow-sm" />
-          ) : (
-            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl text-3xl font-bold text-white" style={{ backgroundColor: a }}>
-              {(resume.personal.fullName || "Y").slice(0, 1).toUpperCase()}
-            </div>
-          )}
+          <Avatar
+            src={resume.personal.photo}
+            name={resume.personal.fullName}
+            accent={a}
+            className="h-[112px] w-[112px] rounded-2xl border-4 border-white text-3xl shadow-[0_6px_18px_rgba(15,23,42,0.16)]"
+          />
           <div className="min-w-0">
-            <h1 className="text-[33px] font-extrabold leading-tight tracking-tight text-slate-900">
-              {resume.personal.fullName || t("resume.yourName")}
-            </h1>
-            <p className="mt-1 inline-block rounded-full px-3 py-1 text-[11.5px] font-semibold text-white" style={{ backgroundColor: a }}>
-              {resume.personal.jobTitle || t("resume.yourRole")}
-            </p>
+            {resume.personal.fullName && (
+              <h1 className="text-[37px] font-extrabold leading-[1.15] tracking-tight text-slate-900">
+                {resume.personal.fullName}
+              </h1>
+            )}
+            {resume.personal.jobTitle && (
+              <p className="mt-1.5 inline-block rounded-full px-3 py-1 text-[12.5px] font-semibold text-white" style={{ backgroundColor: a }}>
+                {resume.personal.jobTitle}
+              </p>
+            )}
             <Contact resume={resume} className="mt-3 text-slate-600" iconClassName="text-slate-500" />
           </div>
         </div>
@@ -671,7 +729,10 @@ function Elegant({ resume, lang }: DocProps) {
   const t = (k: TKey) => translate(lang, k);
   const meta = getTemplate(resume.templateId);
   const a = meta.accent;
-  const serif = 'Georgia, "Times New Roman", "Noto Sans Devanagari", serif';
+  const serif =
+    lang === "en"
+      ? 'Georgia, "Times New Roman", serif'
+      : '"Noto Sans Devanagari", "Noto Sans", sans-serif';
   const H = ({ children }: { children: string }) => (
     <div className="mb-3 text-center">
       <h2 className="text-[10.5px] font-semibold uppercase tracking-[0.3em]" style={{ color: a }}>
@@ -686,13 +747,17 @@ function Elegant({ resume, lang }: DocProps) {
   );
   return (
     <Sheet className="px-16 py-12">
-      <header className="border-y-2 py-6 text-center" style={{ borderColor: "#d6c9a8" }}>
-        <h1 className="text-[34px] leading-tight tracking-[0.04em] text-slate-900" style={{ fontFamily: serif }}>
-          {resume.personal.fullName || t("resume.yourName")}
-        </h1>
-        <p className="mt-1 text-[11.5px] uppercase tracking-[0.3em]" style={{ color: a }}>
-          {resume.personal.jobTitle || t("resume.yourRole")}
-        </p>
+      <header className="border-y-2 py-7 text-center" style={{ borderColor: "#d6c9a8" }}>
+        {resume.personal.fullName && (
+          <h1 className="text-[38px] leading-[1.2] tracking-[0.04em] text-slate-900" style={{ fontFamily: serif }}>
+            {resume.personal.fullName}
+          </h1>
+        )}
+        {resume.personal.jobTitle && (
+          <p className="mt-1.5 text-[12.5px] uppercase tracking-[0.3em]" style={{ color: a }}>
+            {resume.personal.jobTitle}
+          </p>
+        )}
         <Contact resume={resume} className="mt-3 justify-center text-slate-600" iconClassName="text-slate-400" />
       </header>
       {resume.personal.summary && (
@@ -754,15 +819,19 @@ function Technical({ resume, lang }: DocProps) {
   );
   return (
     <Sheet>
-      <header className="px-12 pb-6 pt-10">
+      <header className="px-12 pb-7 pt-11">
         <div className="flex items-end justify-between gap-6">
-          <div>
-            <h1 className="text-[30px] font-bold leading-tight tracking-tight text-slate-900">
-              {resume.personal.fullName || t("resume.yourName")}
-            </h1>
-            <p className="mt-0.5 text-[12px] font-semibold" style={{ color: a }}>
-              {resume.personal.jobTitle || t("resume.yourRole")}
-            </p>
+          <div className="min-w-0">
+            {resume.personal.fullName && (
+              <h1 className="text-[34px] font-bold leading-[1.15] tracking-tight text-slate-900">
+                {resume.personal.fullName}
+              </h1>
+            )}
+            {resume.personal.jobTitle && (
+              <p className="mt-1 text-[13.5px] font-semibold" style={{ color: a }}>
+                {resume.personal.jobTitle}
+              </p>
+            )}
           </div>
           <div className="max-w-[300px]">
             <Contact resume={resume} className="justify-end text-right text-slate-600" iconClassName="hidden" gap="gap-y-0.5" />
@@ -833,21 +902,25 @@ function Compact({ resume, lang }: DocProps) {
   const t = (k: TKey) => translate(lang, k);
   const a = getTemplate(resume.templateId).accent;
   const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-    <div className="grid grid-cols-[116px_1fr] gap-4 border-t border-slate-200 py-2.5">
-      <h2 className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">{label}</h2>
+    <div className="grid grid-cols-[132px_1fr] gap-5 border-t border-slate-200 py-3.5">
+      <h2 className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-slate-500">{label}</h2>
       <div>{children}</div>
     </div>
   );
   return (
-    <Sheet className="px-12 py-9">
-      <header className="flex items-end justify-between gap-4 pb-3">
-        <div>
-          <h1 className="text-[26px] font-bold leading-tight tracking-tight text-slate-900">
-            {resume.personal.fullName || t("resume.yourName")}
-          </h1>
-          <p className="text-[11.5px] font-semibold" style={{ color: a }}>
-            {resume.personal.jobTitle || t("resume.yourRole")}
-          </p>
+    <Sheet className="px-12 py-12">
+      <header className="flex items-end justify-between gap-4 pb-4">
+        <div className="min-w-0">
+          {resume.personal.fullName && (
+            <h1 className="text-[30px] font-bold leading-[1.15] tracking-tight text-slate-900">
+              {resume.personal.fullName}
+            </h1>
+          )}
+          {resume.personal.jobTitle && (
+            <p className="mt-0.5 text-[13px] font-semibold" style={{ color: a }}>
+              {resume.personal.jobTitle}
+            </p>
+          )}
         </div>
         <div className="max-w-[330px]">
           <Contact resume={resume} className="justify-end text-right text-slate-600" iconClassName="hidden" gap="gap-y-0" />
@@ -907,13 +980,17 @@ function Bold({ resume, lang }: DocProps) {
   return (
     <Sheet className="px-14 py-12">
       <header>
-        <h1 className="text-[44px] font-black leading-[1.02] tracking-tight text-slate-900">
-          {resume.personal.fullName || t("resume.yourName")}
-        </h1>
+        {resume.personal.fullName && (
+          <h1 className="text-[48px] font-black leading-[1.08] tracking-tight text-slate-900">
+            {resume.personal.fullName}
+          </h1>
+        )}
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
-          <span className="rounded px-2.5 py-1 text-[11.5px] font-bold uppercase tracking-[0.12em] text-white" style={{ backgroundColor: a }}>
-            {resume.personal.jobTitle || t("resume.yourRole")}
-          </span>
+          {resume.personal.jobTitle && (
+            <span className="rounded px-2.5 py-1 text-[12.5px] font-bold uppercase tracking-[0.12em] text-white" style={{ backgroundColor: a }}>
+              {resume.personal.jobTitle}
+            </span>
+          )}
           <Contact resume={resume} className="text-slate-600" iconClassName="text-slate-400" />
         </div>
       </header>
@@ -974,27 +1051,30 @@ function Fresh({ resume, lang }: DocProps) {
     <h2 className="mb-2.5 text-[12px] font-bold text-slate-800">{children}</h2>
   );
   return (
-    <Sheet className="px-11 py-10">
+    <Sheet className="px-11 py-11">
       <header
-        className="relative overflow-hidden rounded-2xl px-8 py-7"
+        className="relative overflow-hidden rounded-2xl px-8 py-8"
         style={{ backgroundImage: `linear-gradient(135deg, ${soft}, #ffffff 70%)` }}
       >
         <div className="absolute -right-8 -top-10 h-36 w-36 rounded-full opacity-20" style={{ backgroundColor: a }} />
         <div className="relative flex items-center gap-5">
-          {resume.personal.photo ? (
-            <img src={resume.personal.photo} alt="" className="h-[84px] w-[84px] rounded-full border-[3px] border-white object-cover shadow" />
-          ) : (
-            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full text-2xl font-bold text-white shadow" style={{ backgroundColor: a }}>
-              {(resume.personal.fullName || "Y").slice(0, 1).toUpperCase()}
-            </div>
-          )}
+          <Avatar
+            src={resume.personal.photo}
+            name={resume.personal.fullName}
+            accent={a}
+            className="h-[100px] w-[100px] rounded-full border-[3px] border-white text-3xl shadow-[0_6px_18px_rgba(15,23,42,0.16)]"
+          />
           <div className="min-w-0 flex-1">
-            <h1 className="text-[30px] font-bold leading-tight tracking-tight text-slate-900">
-              {resume.personal.fullName || t("resume.yourName")}
-            </h1>
-            <p className="text-[12px] font-semibold" style={{ color: a }}>
-              {resume.personal.jobTitle || t("resume.yourRole")}
-            </p>
+            {resume.personal.fullName && (
+              <h1 className="text-[34px] font-bold leading-[1.15] tracking-tight text-slate-900">
+                {resume.personal.fullName}
+              </h1>
+            )}
+            {resume.personal.jobTitle && (
+              <p className="mt-0.5 text-[13.5px] font-semibold" style={{ color: a }}>
+                {resume.personal.jobTitle}
+              </p>
+            )}
             <Contact resume={resume} className="mt-2 text-slate-600" iconClassName="text-slate-400" />
           </div>
         </div>
@@ -1098,9 +1178,10 @@ export function CoverLetterDocument({ resume, lang }: DocProps) {
   const t = (k: TKey) => translate(lang, k);
   const meta = getTemplate(resume.templateId);
   const a = meta.accent;
-  const name = resume.personal.fullName || t("resume.yourName");
-  const role = resume.personal.jobTitle || t("resume.yourRole");
-  const manager = resume.coverLetter.manager || t("resume.hiringManager");
+  const name = resume.personal.fullName;
+  const role = resume.personal.jobTitle;
+  const manager = resume.coverLetter.manager;
+  const salutation = manager ? `${t("resume.dear")} ${manager}` : `${t("resume.dear")} ${t("resume.hiringManager")}`;
   const subject = [resume.coverLetter.jobTitle, resume.coverLetter.company]
     .filter(Boolean)
     .join(" · ");
@@ -1112,27 +1193,31 @@ export function CoverLetterDocument({ resume, lang }: DocProps) {
 
   return (
     <Sheet className="px-16 py-14">
-      <header className="border-b-2 pb-5" style={{ borderColor: a }}>
-        <h1 className="text-[28px] font-bold leading-tight text-slate-900">{name}</h1>
-        <p className="text-[12px] font-semibold" style={{ color: a }}>
-          {role}
-        </p>
-        <Contact resume={resume} className="mt-2 text-slate-600" iconClassName="text-slate-400" />
+      <header className="border-b-2 pb-6" style={{ borderColor: a }}>
+        {name && <h1 className="text-[32px] font-bold leading-[1.2] text-slate-900">{name}</h1>}
+        {role && (
+          <p className="mt-0.5 text-[13.5px] font-semibold" style={{ color: a }}>
+            {role}
+          </p>
+        )}
+        <Contact resume={resume} className="mt-2.5 text-slate-600" iconClassName="text-slate-400" />
       </header>
-      <div className="mt-8 text-[11.5px] leading-[1.7] text-slate-700">
+      <div className="mt-9 text-[12.5px] leading-[1.75] text-slate-700">
         <p className="text-right text-slate-500">{date}</p>
-        <div className="mt-5 space-y-0.5">
-          <p className="font-semibold text-slate-900">{manager}</p>
-          {resume.coverLetter.company && <p>{resume.coverLetter.company}</p>}
-        </div>
+        {(manager || resume.coverLetter.company) && (
+          <div className="mt-5 space-y-0.5">
+            {manager && <p className="font-semibold text-slate-900">{manager}</p>}
+            {resume.coverLetter.company && <p>{resume.coverLetter.company}</p>}
+          </div>
+        )}
         {subject && (
           <p className="mt-5 font-semibold text-slate-900">
             {lang === "en" ? "Subject: " : ""}
             {subject}
           </p>
         )}
-        <p className="mt-5">{t("resume.dear")} {manager},</p>
-        <div className="mt-4 space-y-3">
+        <p className="mt-5">{salutation},</p>
+        <div className="mt-4 space-y-3.5">
           {paragraphs.length > 0 ? (
             paragraphs.map((p, i) => <p key={i}>{p}</p>)
           ) : (
@@ -1145,12 +1230,14 @@ export function CoverLetterDocument({ resume, lang }: DocProps) {
             </p>
           )}
         </div>
-        <div className="mt-8">
+        <div className="mt-10">
           <p>{t("resume.sincerely")},</p>
-          <p className="mt-6 text-[13px] font-semibold text-slate-900">{name}</p>
-          <p className="text-[11px]" style={{ color: a }}>
-            {role}
-          </p>
+          {name && <p className="mt-7 text-[14px] font-semibold text-slate-900">{name}</p>}
+          {role && (
+            <p className="mt-0.5 text-[12px]" style={{ color: a }}>
+              {role}
+            </p>
+          )}
         </div>
       </div>
     </Sheet>
