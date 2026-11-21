@@ -163,7 +163,7 @@ function Avatar({
       <img
         src={src}
         alt=""
-        className={cn("shrink-0 bg-white object-cover object-top", className)}
+        className={cn("shrink-0 bg-white object-cover object-center", className)}
       />
     );
   }
@@ -323,7 +323,7 @@ function Classic({ resume, lang }: DocProps) {
     </h2>
   );
   return (
-    <Sheet className="px-14 py-12">
+    <Sheet className="resume-stack px-14 py-12">
       <header className="text-center">
         {resume.personal.photo && (
           <Avatar
@@ -337,6 +337,7 @@ function Classic({ resume, lang }: DocProps) {
         <Contact resume={resume} className="mt-3 justify-center text-slate-600" />
       </header>
       <div className="my-5 border-t-2 border-slate-800" />
+      <div className="resume-fill">
       {resume.personal.summary && (
         <section className="resume-section mb-5">
           <H>{t("resume.profile")}</H>
@@ -380,6 +381,7 @@ function Classic({ resume, lang }: DocProps) {
           <p className="text-[11.5px] text-slate-700">{resume.languagesKnown.join("  ·  ")}</p>
         </section>
       )}
+      </div>
     </Sheet>
   );
 }
@@ -392,7 +394,7 @@ function Modern({ resume, lang }: DocProps) {
   return (
     <Sheet className="flex flex-row-reverse">
       {/* Main content comes first in the DOM so ATS parsers read the name and roles before the sidebar. */}
-      <div className="min-w-0 flex-1 px-9 py-11">
+      <div className="resume-fill min-w-0 flex-1 px-9 py-11">
         <Name resume={resume} lang={lang} className="text-[34px]" roleClass="text-[14px] font-semibold" />
         <div className="mt-3 h-[3px] w-12 rounded-full" style={{ backgroundColor: a }} />
         {resume.personal.summary && (
@@ -499,12 +501,13 @@ function Minimal({ resume, lang }: DocProps) {
     </h2>
   );
   return (
-    <Sheet className="px-16 py-14">
+    <Sheet className="resume-stack px-16 py-14">
       <header>
         <Name resume={resume} lang={lang} className="text-[30px] font-medium tracking-tight" roleClass="mt-1 text-[12px] font-normal uppercase tracking-[0.18em] text-slate-500" />
         <Contact resume={resume} className="mt-4 text-slate-500" iconClassName="text-slate-400" gap="gap-x-5 gap-y-1" />
       </header>
       <div className="my-7 h-px bg-slate-200" />
+      <div className="resume-fill">
       {resume.personal.summary && (
         <section className="resume-section mb-7">
           <p className="max-w-[560px] text-[12px] leading-[1.75] text-slate-600 whitespace-pre-line">{resume.personal.summary}</p>
@@ -546,6 +549,7 @@ function Minimal({ resume, lang }: DocProps) {
           </ul>
         </section>
       )}
+      </div>
     </Sheet>
   );
 }
@@ -561,7 +565,7 @@ function Executive({ resume, lang }: DocProps) {
     </h2>
   );
   return (
-    <Sheet>
+    <Sheet className="resume-stack">
       <header className="px-14 py-11 text-white" style={{ backgroundColor: "#292524" }}>
         <div className="flex items-center gap-6">
           <Avatar
@@ -586,7 +590,7 @@ function Executive({ resume, lang }: DocProps) {
         </div>
       </header>
       <div className="h-1.5 w-full" style={{ backgroundColor: a }} />
-      <div className="px-14 py-9">
+      <div className="resume-fill px-14 py-9">
         {resume.personal.summary && (
           <section className="resume-section mb-6">
             <H>{t("resume.profile")}</H>
@@ -649,7 +653,7 @@ function Creative({ resume, lang }: DocProps) {
     </h2>
   );
   return (
-    <Sheet>
+    <Sheet className="resume-stack">
       <header className="relative overflow-hidden px-12 pb-10 pt-12" style={{ backgroundColor: soft }}>
         <div className="absolute -right-10 -top-16 h-52 w-52 rounded-full opacity-10" style={{ backgroundColor: a }} />
         <div className="relative flex items-center gap-6">
@@ -674,7 +678,7 @@ function Creative({ resume, lang }: DocProps) {
           </div>
         </div>
       </header>
-      <div className="px-12 py-9">
+      <div className="resume-fill px-12 py-9">
         {resume.personal.summary && (
           <section className="resume-section mb-6">
             <H>{t("resume.profile")}</H>
@@ -746,7 +750,7 @@ function Elegant({ resume, lang }: DocProps) {
     </div>
   );
   return (
-    <Sheet className="px-16 py-12">
+    <Sheet className="resume-stack px-16 py-12">
       <header className="border-y-2 py-7 text-center" style={{ borderColor: "#d6c9a8" }}>
         {resume.personal.fullName && (
           <h1 className="text-[38px] leading-[1.2] tracking-[0.04em] text-slate-900" style={{ fontFamily: serif }}>
@@ -760,9 +764,10 @@ function Elegant({ resume, lang }: DocProps) {
         )}
         <Contact resume={resume} className="mt-3 justify-center text-slate-600" iconClassName="text-slate-400" />
       </header>
+      <div className="resume-fill">
       {resume.personal.summary && (
         <section className="resume-section mt-6">
-          <p className="mx-auto max-w-[580px] text-center text-[11.5px] leading-[1.75] text-slate-700 whitespace-pre-line">
+          <p className="mx-auto max-w-[580px] text-center text-[12px] leading-[1.78] text-slate-700 whitespace-pre-line">
             {resume.personal.summary}
           </p>
         </section>
@@ -803,6 +808,7 @@ function Elegant({ resume, lang }: DocProps) {
           </ul>
         </section>
       )}
+      </div>
     </Sheet>
   );
 }
@@ -818,7 +824,7 @@ function Technical({ resume, lang }: DocProps) {
     </h2>
   );
   return (
-    <Sheet>
+    <Sheet className="resume-stack">
       <header className="px-12 pb-7 pt-11">
         <div className="flex items-end justify-between gap-6">
           <div className="min-w-0">
@@ -839,7 +845,7 @@ function Technical({ resume, lang }: DocProps) {
         </div>
         <div className="mt-4 h-1 w-full rounded" style={{ backgroundColor: a }} />
       </header>
-      <div className="flex gap-8 px-12 pb-10">
+      <div className="resume-fill flex gap-8 px-12 pb-10">
         <div className="flex-1">
           {resume.personal.summary && (
             <section className="resume-section mb-5">
@@ -908,7 +914,7 @@ function Compact({ resume, lang }: DocProps) {
     </div>
   );
   return (
-    <Sheet className="px-12 py-12">
+    <Sheet className="resume-stack px-12 py-12">
       <header className="flex items-end justify-between gap-4 pb-4">
         <div className="min-w-0">
           {resume.personal.fullName && (
@@ -931,7 +937,7 @@ function Compact({ resume, lang }: DocProps) {
           {resume.personal.summary}
         </p>
       )}
-      <div className="mt-2">
+      <div className="resume-fill mt-2">
         {resume.experience.length > 0 && (
           <Row label={t("resume.experience")}>
             <ExpItems resume={resume} lang={lang} accent={a} muted="#94a3b8" dense />
@@ -978,7 +984,7 @@ function Bold({ resume, lang }: DocProps) {
     </h2>
   );
   return (
-    <Sheet className="px-14 py-12">
+    <Sheet className="resume-stack px-14 py-12">
       <header>
         {resume.personal.fullName && (
           <h1 className="text-[48px] font-black leading-[1.08] tracking-tight text-slate-900">
@@ -994,6 +1000,7 @@ function Bold({ resume, lang }: DocProps) {
           <Contact resume={resume} className="text-slate-600" iconClassName="text-slate-400" />
         </div>
       </header>
+      <div className="resume-fill">
       {resume.personal.summary && (
         <section className="resume-section mt-6 rounded-r-lg border-l-4 py-1 pl-4" style={{ borderColor: a, backgroundColor: soft }}>
           <p className="text-[11.5px] leading-[1.7] text-slate-700 whitespace-pre-line">{resume.personal.summary}</p>
@@ -1038,6 +1045,7 @@ function Bold({ resume, lang }: DocProps) {
           </section>
         )}
       </div>
+      </div>
     </Sheet>
   );
 }
@@ -1051,7 +1059,7 @@ function Fresh({ resume, lang }: DocProps) {
     <h2 className="mb-2.5 text-[12px] font-bold text-slate-800">{children}</h2>
   );
   return (
-    <Sheet className="px-11 py-11">
+    <Sheet className="resume-stack px-11 py-11">
       <header
         className="relative overflow-hidden rounded-2xl px-8 py-8"
         style={{ backgroundImage: `linear-gradient(135deg, ${soft}, #ffffff 70%)` }}
@@ -1079,7 +1087,7 @@ function Fresh({ resume, lang }: DocProps) {
           </div>
         </div>
       </header>
-      <div className="mt-6">
+      <div className="resume-fill mt-6">
         {resume.personal.summary && (
           <section className="resume-section mb-5 rounded-xl border border-slate-100 p-4">
             <H>{t("resume.profile")}</H>
@@ -1153,6 +1161,56 @@ const renderers: Record<string, (p: DocProps) => React.ReactElement> = {
   fresh: Fresh,
 };
 
+
+const SHEET_WIDTH = 794;
+const SHEET_HEIGHT = 1123;
+const MAX_FILL_GAP = 44;
+
+function usePageFill() {
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useLayoutEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+
+    const apply = () => {
+      const sheet = root.querySelector<HTMLElement>(".resume-sheet");
+      const fill = root.querySelector<HTMLElement>(".resume-fill");
+      if (!sheet || !fill) return;
+
+      fill.style.setProperty("--rs-gap", "0px");
+
+      const kids = Array.from(fill.children) as HTMLElement[];
+      if (kids.length < 2) return;
+
+      const sheetRect = sheet.getBoundingClientRect();
+      const scale = sheetRect.width / SHEET_WIDTH || 1;
+      const padBottom = parseFloat(getComputedStyle(sheet).paddingBottom) || 0;
+      const fillStyle = getComputedStyle(fill);
+      const fillPadBottom = parseFloat(fillStyle.paddingBottom) || 0;
+      const fillPadTop = parseFloat(fillStyle.paddingTop) || 0;
+      const lastRect = kids[kids.length - 1].getBoundingClientRect();
+      const used = lastRect.bottom - sheetRect.top + (fillPadTop ? 0 : 0);
+      const free =
+        SHEET_HEIGHT * scale - padBottom * scale - used - fillPadBottom * scale - 6 * scale;
+      const gap = Math.max(0, Math.min(MAX_FILL_GAP, free / (kids.length - 1) / scale));
+      fill.style.setProperty("--rs-gap", `${gap.toFixed(1)}px`);
+    };
+
+    apply();
+    const raf = requestAnimationFrame(apply);
+    const fonts = document.fonts;
+    if (fonts?.ready) fonts.ready.then(apply).catch(() => {});
+    window.addEventListener("resize", apply);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", apply);
+    };
+  });
+
+  return ref;
+}
+
 export function ResumeDocument({ resume, lang }: DocProps) {
   const safe: Resume = {
     ...resume,
@@ -1171,7 +1229,11 @@ export function ResumeDocument({ resume, lang }: DocProps) {
     ),
   };
   const Renderer = renderers[safe.templateId] ?? Classic;
-  return <Renderer resume={safe} lang={lang} />;
+  return (
+    <div ref={usePageFill()}>
+      <Renderer resume={safe} lang={lang} />
+    </div>
+  );
 }
 
 export function CoverLetterDocument({ resume, lang }: DocProps) {

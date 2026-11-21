@@ -70,7 +70,7 @@ export function PrintView({ id, initialMode }: { id: string; initialMode: DocMod
     );
   }
 
-  const printCss = `@page{size:A4;margin:0}@media print{html,body{background:#fff!important;margin:0!important;padding:0!important}.no-print{display:none!important}.print-root{min-height:0!important;background:#fff!important;padding:0!important}.resume-sheet{width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important}}`;
+  const printCss = `@page{size:A4;margin:0}@media print{html,body{background:#fff!important;margin:0!important;padding:0!important}.no-print{display:none!important}.print-root{min-height:0!important;background:#fff!important;padding:0!important}.resume-sheet{width:210mm!important;min-height:296mm!important;margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important}.print-zoom{width:210mm!important;zoom:1!important}}`;
 
   return (
     <div className="print-root min-h-dvh bg-slate-200/80">
@@ -128,7 +128,7 @@ export function PrintView({ id, initialMode }: { id: string; initialMode: DocMod
         </div>
       </div>
 
-      <div className="flex justify-center px-2 py-5 sm:px-4 sm:py-8">
+      <div className="flex justify-center px-2 py-5 sm:px-4 sm:py-8 print:p-0">
         <div className="print-zoom w-[794px] shrink-0 shadow-[0_18px_60px_-18px_rgba(15,23,42,0.4)] ring-1 ring-black/5 print:shadow-none print:ring-0">
           {mode === "cover" ? (
             <CoverLetterDocument resume={resume} lang={lang} />

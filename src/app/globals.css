@@ -218,6 +218,7 @@
   line-height: 1.72;
 }
 
+/* Devanagari conjuncts break apart with wide tracking, so keep it tight. */
 .resume-sheet:lang(hi) h1,
 .resume-sheet:lang(hi) h2,
 .resume-sheet:lang(hi) h3,
@@ -226,10 +227,36 @@
 .resume-sheet:lang(mr) h3,
 .resume-sheet:lang(hi) .uppercase,
 .resume-sheet:lang(mr) .uppercase {
-  letter-spacing: 0.08em;
+  letter-spacing: 0.01em;
+}
+
+.resume-sheet:lang(hi) p,
+.resume-sheet:lang(hi) li,
+.resume-sheet:lang(mr) p,
+.resume-sheet:lang(mr) li {
+  letter-spacing: 0;
 }
 
 .resume-section {
+  break-inside: avoid;
+}
+
+/* Vertical rhythm: spread sections so a short resume still fills the page. */
+.resume-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-fill {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: flex-start;
+  row-gap: var(--rs-gap, 0px);
+  min-height: 0;
+}
+
+.resume-fill > * {
   break-inside: avoid;
 }
 
@@ -260,7 +287,7 @@ nextjs-portal {
   }
   .resume-sheet {
     width: 210mm !important;
-    min-height: 297mm !important;
+    min-height: 296mm !important;
     margin: 0 !important;
     box-shadow: none !important;
     border: 0 !important;

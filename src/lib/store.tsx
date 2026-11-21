@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   createResume,
   newId,
-  sampleResume,
   type Lang,
   type Resume,
   type TemplateId,
@@ -81,7 +80,7 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
   const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(() => {
-    let next: Persisted = { resumes: [sampleResume()], lang: "en" };
+    let next: Persisted = { resumes: [], lang: "en" };
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {

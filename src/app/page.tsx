@@ -89,8 +89,9 @@ function ResumeCard({
               {resume.title}
             </h3>
             <p className="mt-0.5 truncate text-xs text-muted-foreground">
-              {resume.personal.fullName || t("resume.yourName")}
-              {resume.personal.jobTitle ? ` · ${resume.personal.jobTitle}` : ""}
+              {[resume.personal.fullName, resume.personal.jobTitle]
+                .filter(Boolean)
+                .join(" · ") || t("dash.emptyResume")}
             </p>
           </div>
         </div>
