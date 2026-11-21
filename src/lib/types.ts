@@ -199,6 +199,108 @@ export function sampleResume(): Resume {
   return r;
 }
 
+const str = (value: unknown) =>
+  typeof value === "string" ? value : value == null ? "" : String(value);
+
+const trim = (value: unknown) => str(value).trim();
+
+export function sanitizeEducation(item: Partial<EducationItem> | null | undefined): EducationItem {
+  return {
+    id: trim(item?.id) || newId(),
+    degree: trim(item?.degree),
+    institution: trim(item?.institution),
+    field: trim(item?.field),
+    startYear: trim(item?.startYear),
+    endYear: trim(item?.endYear),
+    score: trim(item?.score),
+  };
+}
+
+export function sanitizeExperience(
+  item: Partial<ExperienceItem> | null | undefined,
+): ExperienceItem {
+  return {
+    id: trim(item?.id) || newId(),
+    role: trim(item?.role),
+    company: trim(item?.company),
+    location: trim(item?.location),
+    startDate: trim(item?.startDate),
+    endDate: trim(item?.endDate),
+    current: item?.current === true,
+    description: str(item?.description).replace(/\r\n?/g, "\n").trim(),
+  };
+}
+
+/**
+ * Coerces a resume (possibly from old or corrupt localStorage) into a fully
+ * populated, string-only shape so the PDF renderer never receives undefined,
+ * null or non-string values that would silently drop a field.
+ */
+export function sanitizeResume(resume: Resume): Resume {
+  const p = resume?.personal ?? emptyPersonal();
+  const personal: PersonalInfo = {
+    fullName: trim(p.fullName),
+    jobTitle: trim(p.jobTitle),
+    email: trim(p.email),
+    phone: trim(p.phone),
+    address: trim(p.address),
+    city: trim(p.city),
+    state: trim(p.state),
+    pincode: trim(p.pincode),
+    dob: trim(p.dob),
+    summary: str(p.summary).replace(/\r\n?/g, "\n").trim(),
+    photo: str(p.photo),
+  };
+  const stringList = (list: unknown) =>
+    Array.isArray(list) ? list.map(trim).filter(Boolean) : [];
+  const education = Array.isArray(resume?.education)
+    ? resume.education.map(sanitizeEducation).filter((e) =>
+        [e.degree, e.institution, e.field, e.startYear, e.endYear, e.score].some(Boolean),
+      )
+    : [];
+  const experience = Array.isArray(resume?.experience)
+    ? resume.experience.map(sanitizeExperience).filter((e) =>
+        [e.role, e.company, e.location, e.startDate, e.endDate, e.description].some(Boolean),
+      )
+    : [];
+  const cover = resume?.coverLetter;
+  return {
+    id: resume?.id ?? newId(),
+    title: trim(resume?.title),
+    templateId: resume?.templateId ?? "classic",
+    language: resume?.language ?? "en",
+    createdAt: resume?.createdAt ?? Date.now(),
+    updatedAt: resume?.updatedAt ?? Date.now(),
+    personal,
+    education,
+    experience,
+    skills: stringList(resume?.skills),
+    achievements: stringList(resume?.achievements),
+    languagesKnown: stringList(resume?.languagesKnown),
+    coverLetter: {
+      jobTitle: trim(cover?.jobTitle),
+      company: trim(cover?.company),
+      manager: trim(cover?.manager),
+      body: str(cover?.body).replace(/\r\n?/g, "\n").trim(),
+    },
+  };
+}
+
+/** Section keys that are empty and worth telling the user about before printing. */
+export function missingSections(resume: Resume): string[] {
+  const out: string[] = [];
+  const p = resume.personal;
+  if (!p.fullName) out.push("build.fullName");
+  if (!p.email && !p.phone) out.push("build.email");
+  if (!p.summary) out.push("resume.profile");
+  if (!resume.experience.some((e) => e.role || e.company)) out.push("resume.experience");
+  if (!resume.education.some((e) => e.degree || e.institution)) out.push("resume.education");
+  if (!resume.skills.length) out.push("resume.skills");
+  if (!resume.achievements.length) out.push("resume.achievements");
+  if (!resume.languagesKnown.length) out.push("resume.languages");
+  return out;
+}
+
 export function completion(resume: Resume) {
   const p = resume.personal;
   const checks = [
