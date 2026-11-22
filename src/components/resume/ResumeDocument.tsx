@@ -421,13 +421,15 @@ function Modern({ resume, lang }: DocProps) {
     <Sheet className="flex flex-row-reverse">
       {/* Main content comes first in the DOM so ATS parsers read the name and roles before the sidebar. */}
       <div className="resume-fill min-w-0 flex-1 px-9 py-11">
-        <Name resume={resume} lang={lang} className="text-[34px]" roleClass="text-[14px] font-semibold" />
-        <div className="mt-3 h-[3px] w-12 rounded-full" style={{ backgroundColor: a }} />
-        {resume.personal.summary && (
-          <section className="resume-section mt-6">
-            <p className="text-[12px] leading-[1.68] text-slate-700 whitespace-pre-line">{resume.personal.summary}</p>
-          </section>
-        )}
+        {/* Header block is a single fill child so the page-fill gap can never open
+            up between the name, the job title and the accent rule. */}
+        <div className="resume-section">
+          <Name resume={resume} lang={lang} className="text-[34px]" roleClass="mt-1.5 text-[14px] font-semibold" />
+          <div className="mt-3 h-[3px] w-12 rounded-full" style={{ backgroundColor: a }} />
+          {resume.personal.summary && (
+            <p className="mt-6 text-[12px] leading-[1.68] text-slate-700 whitespace-pre-line">{resume.personal.summary}</p>
+          )}
+        </div>
         {resume.experience.length > 0 && (
           <section className="mt-7">
             <h2 className="mb-3 text-[11.5px] font-bold uppercase tracking-[0.16em]" style={{ color: a }}>
