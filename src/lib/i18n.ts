@@ -190,6 +190,7 @@ const en = {
   "resume.achievements": "Achievements",
   "resume.languages": "Languages",
   "resume.contact": "Contact",
+  "resume.dob": "Date of birth",
   "resume.yourName": "Your Name",
   "resume.yourRole": "Your Job Title",
   "resume.coverTitle": "Cover Letter",
@@ -255,6 +256,7 @@ const en = {
   "print.openNewTab": "Open in new tab",
   "print.back": "Back to editor",
   "print.preparing": "Preparing your document...",
+  "print.missing": "Not added yet (won’t appear in the PDF):",
   "print.cover": "Cover letter",
   "print.resume": "Resume",
 
@@ -457,6 +459,7 @@ const hi: Dict = {
   "resume.achievements": "उपलब्धियां",
   "resume.languages": "भाषाएं",
   "resume.contact": "संपर्क",
+  "resume.dob": "जन्म तिथि",
   "resume.yourName": "आपका नाम",
   "resume.yourRole": "आपका पद",
   "resume.coverTitle": "कवर लेटर",
@@ -522,6 +525,7 @@ const hi: Dict = {
   "print.openNewTab": "नए टैब में खोलें",
   "print.back": "एडिटर पर वापस",
   "print.preparing": "आपका डॉक्यूमेंट तैयार हो रहा है...",
+  "print.missing": "अभी नहीं भरा (PDF में नहीं दिखेगा):",
   "print.cover": "कवर लेटर",
   "print.resume": "रिज़्यूमे",
 
@@ -721,6 +725,7 @@ const mr: Dict = {
   "resume.achievements": "यश",
   "resume.languages": "भाषा",
   "resume.contact": "संपर्क",
+  "resume.dob": "जन्मदिनांक",
   "resume.yourName": "तुमचे नाव",
   "resume.yourRole": "तुमचे पद",
   "resume.coverTitle": "कव्हर लेटर",
@@ -786,6 +791,7 @@ const mr: Dict = {
   "print.openNewTab": "नवीन टॅबमध्ये उघडा",
   "print.back": "एडिटरवर परत",
   "print.preparing": "तुमचा दस्तऐवज तयार होत आहे...",
+  "print.missing": "अजून भरलेले नाही (PDF मध्ये दिसणार नाही):",
   "print.cover": "कव्हर लेटर",
   "print.resume": "रिझ्युमे",
 

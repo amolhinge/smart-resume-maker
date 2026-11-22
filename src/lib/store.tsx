@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   createResume,
   newId,
+  sanitizeResume,
   type Lang,
   type Resume,
   type TemplateId,
@@ -42,33 +43,7 @@ function normalize(raw: unknown): Persisted | null {
   const lang: Lang = data.lang === "hi" || data.lang === "mr" ? data.lang : "en";
   const resumes = data.resumes
     .filter((r): r is Resume => Boolean(r && typeof r.id === "string"))
-    .map((r) => ({
-      ...r,
-      personal: r.personal ?? {
-        fullName: "",
-        jobTitle: "",
-        email: "",
-        phone: "",
-        address: "",
-        city: "",
-        state: "",
-        pincode: "",
-        dob: "",
-        summary: "",
-        photo: "",
-      },
-      education: Array.isArray(r.education) ? r.education : [],
-      experience: Array.isArray(r.experience) ? r.experience : [],
-      skills: Array.isArray(r.skills) ? r.skills : [],
-      achievements: Array.isArray(r.achievements) ? r.achievements : [],
-      languagesKnown: Array.isArray(r.languagesKnown) ? r.languagesKnown : [],
-      coverLetter: r.coverLetter ?? {
-        jobTitle: "",
-        company: "",
-        manager: "",
-        body: "",
-      },
-    }));
+    .map((r) => sanitizeResume(r));
   return { resumes, lang };
 }
 

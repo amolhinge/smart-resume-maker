@@ -9,10 +9,13 @@ import {
   Loader2,
   Printer,
   FileQuestion,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { translate, type TKey } from "@/lib/i18n";
 import { useStore, useT } from "@/lib/store";
+import { missingSections } from "@/lib/types";
 import type { DocMode } from "./Preview";
 import { CoverLetterDocument, ResumeDocument } from "./ResumeDocument";
 
@@ -70,7 +73,8 @@ export function PrintView({ id, initialMode }: { id: string; initialMode: DocMod
     );
   }
 
-  const printCss = `@page{size:A4;margin:0}@media print{html,body{background:#fff!important;margin:0!important;padding:0!important}.no-print{display:none!important}.print-root{min-height:0!important;background:#fff!important;padding:0!important}.resume-sheet{width:210mm!important;min-height:296mm!important;margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important}.print-zoom{width:210mm!important;zoom:1!important}}`;
+  const missing = mode === "cover" ? [] : missingSections(resume);
+  const printCss = `@page{size:A4;margin:0}@media print{html,body{background:#fff!important;margin:0!important;padding:0!important}.no-print{display:none!important}.print-root{min-height:0!important;background:#fff!important;padding:0!important}.resume-sheet{width:calc(210mm / var(--rs-fit,1))!important;min-height:calc(296mm / var(--rs-fit,1))!important;zoom:var(--rs-fit,1);margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important}.print-zoom{width:210mm!important;zoom:1!important}}`;
 
   return (
     <div className="print-root min-h-dvh bg-slate-200/80">
@@ -126,6 +130,19 @@ export function PrintView({ id, initialMode }: { id: string; initialMode: DocMod
           <Info className="h-3 w-3 shrink-0" />
           {t("print.tip")}
         </div>
+        {missing.length > 0 && (
+          <div className="mx-auto max-w-4xl px-3 pb-2">
+            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[10.5px] leading-snug text-amber-900 ring-1 ring-amber-200">
+              <AlertTriangle className="h-3 w-3 shrink-0" />
+              <span className="font-semibold">{t("print.missing")}</span>
+              <span>
+                {missing
+                  .map((k) => translate(lang, k as TKey))
+                  .join(" · ")}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-center px-2 py-5 sm:px-4 sm:py-8 print:p-0">

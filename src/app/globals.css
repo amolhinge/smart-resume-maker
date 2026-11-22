@@ -286,8 +286,11 @@ nextjs-portal {
     display: block !important;
   }
   .resume-sheet {
-    width: 210mm !important;
-    min-height: 296mm !important;
+    /* --rs-fit is measured per-resume (see usePageFill). Dividing the width by
+       the same factor keeps the printed sheet exactly 210mm wide after zoom. */
+    width: calc(210mm / var(--rs-fit, 1)) !important;
+    min-height: calc(296mm / var(--rs-fit, 1)) !important;
+    zoom: var(--rs-fit, 1);
     margin: 0 !important;
     box-shadow: none !important;
     border: 0 !important;

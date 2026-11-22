@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { CalendarDays, Mail, MapPin, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { translate, type TKey } from "@/lib/i18n";
-import type { Lang, Resume } from "@/lib/types";
+import { sanitizeResume, type Lang, type Resume } from "@/lib/types";
 import { getTemplate } from "@/lib/templates";
 
 interface DocProps {
@@ -37,6 +37,28 @@ function monthYear(value: string, lang: Lang) {
   }
 }
 
+function formatDob(value: string, lang: Lang) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  const locale = lang === "mr" ? "mr-IN" : lang === "hi" ? "hi-IN" : "en-IN";
+  try {
+    return date.toLocaleDateString(locale, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return value;
+  }
+}
+
+const dobLabel: Record<Lang, string> = {
+  en: "DOB",
+  hi: "जन्म तिथि",
+  mr: "जन्मदिनांक",
+};
+
 function range(
   start: string,
   end: string,
@@ -54,20 +76,24 @@ function range(
 
 function Contact({
   resume,
+  lang = "en",
   className,
   iconClassName,
   gap = "gap-x-4 gap-y-1",
 }: {
   resume: Resume;
+  lang?: Lang;
   className?: string;
   iconClassName?: string;
   gap?: string;
 }) {
   const loc = locationOf(resume);
+  const dob = formatDob(resume.personal.dob, lang);
   const items = [
     { icon: Mail, value: resume.personal.email },
     { icon: Phone, value: resume.personal.phone },
     { icon: MapPin, value: loc },
+    { icon: CalendarDays, value: dob ? `${dobLabel[lang]}: ${dob}` : "" },
   ].filter((i) => i.value);
   if (!items.length) return null;
   return (
@@ -334,7 +360,7 @@ function Classic({ resume, lang }: DocProps) {
           />
         )}
         <Name resume={resume} lang={lang} className="text-[36px] tracking-tight" roleClass="uppercase tracking-[0.24em] text-[12px] text-slate-500" />
-        <Contact resume={resume} className="mt-3 justify-center text-slate-600" />
+        <Contact resume={resume} lang={lang} className="mt-3 justify-center text-slate-600" />
       </header>
       <div className="my-5 border-t-2 border-slate-800" />
       <div className="resume-fill">
@@ -448,6 +474,14 @@ function Modern({ resume, lang }: DocProps) {
               <span>{locationOf(resume)}</span>
             </div>
           )}
+          {resume.personal.dob && (
+            <div className="flex gap-2">
+              <CalendarDays size={12} className="mt-[3px] shrink-0" style={{ color: a }} />
+              <span>
+                {dobLabel[lang]}: {formatDob(resume.personal.dob, lang)}
+              </span>
+            </div>
+          )}
         </div>
         {resume.skills.length > 0 && (
           <>
@@ -502,9 +536,19 @@ function Minimal({ resume, lang }: DocProps) {
   );
   return (
     <Sheet className="resume-stack px-16 py-14">
-      <header>
-        <Name resume={resume} lang={lang} className="text-[30px] font-medium tracking-tight" roleClass="mt-1 text-[12px] font-normal uppercase tracking-[0.18em] text-slate-500" />
-        <Contact resume={resume} className="mt-4 text-slate-500" iconClassName="text-slate-400" gap="gap-x-5 gap-y-1" />
+      <header className="flex items-center gap-5">
+        {resume.personal.photo && (
+          <Avatar
+            src={resume.personal.photo}
+            name={resume.personal.fullName}
+            accent={a}
+            className="h-[88px] w-[88px] rounded-full border-2 border-slate-200 shadow-[0_4px_14px_rgba(15,23,42,0.12)]"
+          />
+        )}
+        <div className="min-w-0">
+          <Name resume={resume} lang={lang} className="text-[30px] font-medium tracking-tight" roleClass="mt-1 text-[12px] font-normal uppercase tracking-[0.18em] text-slate-500" />
+          <Contact resume={resume} lang={lang} className="mt-4 text-slate-500" iconClassName="text-slate-400" gap="gap-x-5 gap-y-1" />
+        </div>
       </header>
       <div className="my-7 h-px bg-slate-200" />
       <div className="resume-fill">
@@ -585,7 +629,7 @@ function Executive({ resume, lang }: DocProps) {
                 {resume.personal.jobTitle}
               </p>
             )}
-            <Contact resume={resume} className="mt-3 text-white/75" iconClassName="text-white/50" />
+            <Contact resume={resume} lang={lang} className="mt-3 text-white/75" iconClassName="text-white/50" />
           </div>
         </div>
       </header>
@@ -674,7 +718,7 @@ function Creative({ resume, lang }: DocProps) {
                 {resume.personal.jobTitle}
               </p>
             )}
-            <Contact resume={resume} className="mt-3 text-slate-600" iconClassName="text-slate-500" />
+            <Contact resume={resume} lang={lang} className="mt-3 text-slate-600" iconClassName="text-slate-500" />
           </div>
         </div>
       </header>
@@ -752,6 +796,14 @@ function Elegant({ resume, lang }: DocProps) {
   return (
     <Sheet className="resume-stack px-16 py-12">
       <header className="border-y-2 py-7 text-center" style={{ borderColor: "#d6c9a8" }}>
+        {resume.personal.photo && (
+          <Avatar
+            src={resume.personal.photo}
+            name={resume.personal.fullName}
+            accent={a}
+            className="mx-auto mb-4 h-[96px] w-[96px] rounded-full border-[3px] border-[#d6c9a8] shadow-[0_4px_14px_rgba(15,23,42,0.12)]"
+          />
+        )}
         {resume.personal.fullName && (
           <h1 className="text-[38px] leading-[1.2] tracking-[0.04em] text-slate-900" style={{ fontFamily: serif }}>
             {resume.personal.fullName}
@@ -762,7 +814,7 @@ function Elegant({ resume, lang }: DocProps) {
             {resume.personal.jobTitle}
           </p>
         )}
-        <Contact resume={resume} className="mt-3 justify-center text-slate-600" iconClassName="text-slate-400" />
+        <Contact resume={resume} lang={lang} className="mt-3 justify-center text-slate-600" iconClassName="text-slate-400" />
       </header>
       <div className="resume-fill">
       {resume.personal.summary && (
@@ -827,7 +879,16 @@ function Technical({ resume, lang }: DocProps) {
     <Sheet className="resume-stack">
       <header className="px-12 pb-7 pt-11">
         <div className="flex items-end justify-between gap-6">
-          <div className="min-w-0">
+          <div className="flex min-w-0 items-center gap-5">
+            {resume.personal.photo && (
+              <Avatar
+                src={resume.personal.photo}
+                name={resume.personal.fullName}
+                accent={a}
+                className="h-[84px] w-[84px] rounded-xl border-2 border-slate-200 shadow-[0_4px_14px_rgba(15,23,42,0.12)]"
+              />
+            )}
+            <div className="min-w-0">
             {resume.personal.fullName && (
               <h1 className="text-[34px] font-bold leading-[1.15] tracking-tight text-slate-900">
                 {resume.personal.fullName}
@@ -838,9 +899,10 @@ function Technical({ resume, lang }: DocProps) {
                 {resume.personal.jobTitle}
               </p>
             )}
+            </div>
           </div>
           <div className="max-w-[300px]">
-            <Contact resume={resume} className="justify-end text-right text-slate-600" iconClassName="hidden" gap="gap-y-0.5" />
+            <Contact resume={resume} lang={lang} className="justify-end text-right text-slate-600" iconClassName="hidden" gap="gap-y-0.5" />
           </div>
         </div>
         <div className="mt-4 h-1 w-full rounded" style={{ backgroundColor: a }} />
@@ -916,7 +978,16 @@ function Compact({ resume, lang }: DocProps) {
   return (
     <Sheet className="resume-stack px-12 py-12">
       <header className="flex items-end justify-between gap-4 pb-4">
-        <div className="min-w-0">
+        <div className="flex min-w-0 items-center gap-4">
+          {resume.personal.photo && (
+            <Avatar
+              src={resume.personal.photo}
+              name={resume.personal.fullName}
+              accent={a}
+              className="h-[72px] w-[72px] rounded-full border-2 border-slate-200 shadow-[0_4px_14px_rgba(15,23,42,0.12)]"
+            />
+          )}
+          <div className="min-w-0">
           {resume.personal.fullName && (
             <h1 className="text-[30px] font-bold leading-[1.15] tracking-tight text-slate-900">
               {resume.personal.fullName}
@@ -927,9 +998,10 @@ function Compact({ resume, lang }: DocProps) {
               {resume.personal.jobTitle}
             </p>
           )}
+          </div>
         </div>
         <div className="max-w-[330px]">
-          <Contact resume={resume} className="justify-end text-right text-slate-600" iconClassName="hidden" gap="gap-y-0" />
+          <Contact resume={resume} lang={lang} className="justify-end text-right text-slate-600" iconClassName="hidden" gap="gap-y-0" />
         </div>
       </header>
       {resume.personal.summary && (
@@ -985,7 +1057,8 @@ function Bold({ resume, lang }: DocProps) {
   );
   return (
     <Sheet className="resume-stack px-14 py-12">
-      <header>
+      <header className="flex items-start justify-between gap-6">
+        <div className="min-w-0">
         {resume.personal.fullName && (
           <h1 className="text-[48px] font-black leading-[1.08] tracking-tight text-slate-900">
             {resume.personal.fullName}
@@ -997,8 +1070,17 @@ function Bold({ resume, lang }: DocProps) {
               {resume.personal.jobTitle}
             </span>
           )}
-          <Contact resume={resume} className="text-slate-600" iconClassName="text-slate-400" />
+          <Contact resume={resume} lang={lang} className="text-slate-600" iconClassName="text-slate-400" />
         </div>
+        </div>
+        {resume.personal.photo && (
+          <Avatar
+            src={resume.personal.photo}
+            name={resume.personal.fullName}
+            accent={a}
+            className="h-[104px] w-[104px] shrink-0 rounded-2xl border-4 border-white text-3xl shadow-[0_6px_18px_rgba(15,23,42,0.16)]"
+          />
+        )}
       </header>
       <div className="resume-fill">
       {resume.personal.summary && (
@@ -1083,7 +1165,7 @@ function Fresh({ resume, lang }: DocProps) {
                 {resume.personal.jobTitle}
               </p>
             )}
-            <Contact resume={resume} className="mt-2 text-slate-600" iconClassName="text-slate-400" />
+            <Contact resume={resume} lang={lang} className="mt-2 text-slate-600" iconClassName="text-slate-400" />
           </div>
         </div>
       </header>
@@ -1195,6 +1277,15 @@ function usePageFill() {
         SHEET_HEIGHT * scale - padBottom * scale - used - fillPadBottom * scale - 6 * scale;
       const gap = Math.max(0, Math.min(MAX_FILL_GAP, free / (kids.length - 1) / scale));
       fill.style.setProperty("--rs-gap", `${gap.toFixed(1)}px`);
+
+      // If the content is only slightly taller than one A4 sheet, scale the whole
+      // sheet down for print so a near-miss does not spill a few lines onto a
+      // second page. Genuinely long resumes still paginate normally.
+      const sheetHeight = sheet.scrollHeight;
+      const target = SHEET_HEIGHT - 8;
+      const ratio = target / sheetHeight;
+      const fit = sheetHeight > target && ratio >= 0.8 ? Math.max(0.8, ratio) : 1;
+      sheet.style.setProperty("--rs-fit", fit.toFixed(4));
     };
 
     apply();
@@ -1212,22 +1303,7 @@ function usePageFill() {
 }
 
 export function ResumeDocument({ resume, lang }: DocProps) {
-  const safe: Resume = {
-    ...resume,
-    skills: resume.skills.map((s) => s.trim()).filter(Boolean),
-    achievements: resume.achievements.map((s) => s.trim()).filter(Boolean),
-    languagesKnown: resume.languagesKnown.map((s) => s.trim()).filter(Boolean),
-    education: resume.education.filter((e) =>
-      [e.degree, e.institution, e.field, e.startYear, e.endYear, e.score].some(
-        (v) => v.trim(),
-      ),
-    ),
-    experience: resume.experience.filter((e) =>
-      [e.role, e.company, e.location, e.startDate, e.endDate, e.description].some(
-        (v) => v.trim(),
-      ),
-    ),
-  };
+  const safe = sanitizeResume(resume);
   const Renderer = renderers[safe.templateId] ?? Classic;
   return (
     <div ref={usePageFill()}>
@@ -1236,7 +1312,8 @@ export function ResumeDocument({ resume, lang }: DocProps) {
   );
 }
 
-export function CoverLetterDocument({ resume, lang }: DocProps) {
+export function CoverLetterDocument({ resume: raw, lang }: DocProps) {
+  const resume = sanitizeResume(raw);
   const t = (k: TKey) => translate(lang, k);
   const meta = getTemplate(resume.templateId);
   const a = meta.accent;
@@ -1262,7 +1339,7 @@ export function CoverLetterDocument({ resume, lang }: DocProps) {
             {role}
           </p>
         )}
-        <Contact resume={resume} className="mt-2.5 text-slate-600" iconClassName="text-slate-400" />
+        <Contact resume={resume} lang={lang} className="mt-2.5 text-slate-600" iconClassName="text-slate-400" />
       </header>
       <div className="mt-9 text-[12.5px] leading-[1.75] text-slate-700">
         <p className="text-right text-slate-500">{date}</p>
