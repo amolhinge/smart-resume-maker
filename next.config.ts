@@ -23,9 +23,6 @@ const nextConfig: NextConfig = {
     '**.ideavo.ai',
     '**.ideavo.dev',
   ],
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   turbopack: {
     rules: {
       "*.{jsx,tsx}": {

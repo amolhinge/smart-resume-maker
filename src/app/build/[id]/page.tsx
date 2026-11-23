@@ -1,9 +1,4 @@
-import type { Metadata } from "next";
 import { Builder } from "@/components/builder/Builder";
-
-export const metadata: Metadata = {
-  title: "Resume builder",
-};
 
 export default async function BuildPage({
   params,

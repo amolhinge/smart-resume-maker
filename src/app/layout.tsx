@@ -9,6 +9,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ResumeProvider } from "@/lib/store";
+import { SITE_NAME, absoluteUrl, getSiteUrl } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,17 +21,46 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = getSiteUrl();
+const siteDescription =
+  "Create a professional resume in Marathi, Hindi or English. 10 free templates, live preview and PDF download. Works on Android. Your data stays on your phone.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Smart Resume Maker — Free Resume Builder",
     template: "%s · Smart Resume Maker",
   },
-  description:
-    "Create a professional resume in Marathi, Hindi or English. 10 free templates, live preview and PDF download. Works on Android. Your data stays on your phone.",
-  applicationName: "Smart Resume Maker",
+  description: siteDescription,
+  applicationName: SITE_NAME,
+  alternates: {
+    canonical: absoluteUrl("/"),
+  },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: "Smart Resume Maker — Free Resume Builder",
+    description: siteDescription,
+    url: absoluteUrl("/"),
+    locale: "en_IN",
+    images: [
+      {
+        url: absoluteUrl("/og.png"),
+        width: 1200,
+        height: 630,
+        alt: "Smart Resume Maker — free resume builder with 10 templates",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Smart Resume Maker — Free Resume Builder",
+    description: siteDescription,
+    images: [absoluteUrl("/og.png")],
+  },
   appleWebApp: {
     capable: true,
-    title: "Smart Resume Maker",
+    title: SITE_NAME,
     statusBarStyle: "default",
   },
   icons: {

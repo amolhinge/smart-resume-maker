@@ -1,9 +1,4 @@
-import type { Metadata } from "next";
 import { PrintView } from "@/components/resume/PrintView";
-
-export const metadata: Metadata = {
-  title: "Print resume",
-};
 
 export default async function PrintPage({
   params,
