@@ -264,6 +264,22 @@ const en = {
   "lang.en": "English",
   "lang.hi": "हिंदी",
   "lang.mr": "मराठी",
+
+  "backup.title": "Backup & restore",
+  "backup.desc": "Download a copy of all your resumes and cover letters, or restore them on another device.",
+  "backup.export": "Download backup",
+  "backup.import": "Restore backup",
+  "backup.exported": "Backup downloaded",
+  "backup.restored": "Backup restored",
+  "backup.merge": "Merge with existing",
+  "backup.replace": "Replace everything",
+  "backup.replaceTitle": "Replace all resumes?",
+  "backup.replaceDesc": "This deletes the resumes on this phone and replaces them with the ones in the backup. This cannot be undone.",
+  "backup.restoreTitle": "How should we restore?",
+  "backup.invalid": "This file is not a valid backup.",
+  "backup.notJson": "This file is not a JSON backup.",
+  "backup.empty": "This backup has no resumes.",
+  "backup.failed": "Could not read the backup file.",
 } as const;
 
 export type TKey = keyof typeof en;
@@ -533,6 +549,22 @@ const hi: Dict = {
   "lang.en": "English",
   "lang.hi": "हिंदी",
   "lang.mr": "मराठी",
+
+  "backup.title": "बैकअप और रिस्टोर",
+  "backup.desc": "अपने सभी रिज़्यूमे और कवर लेटर की कॉपी डाउनलोड करें, या दूसरे फोन पर वापस लाएं।",
+  "backup.export": "बैकअप डाउनलोड करें",
+  "backup.import": "बैकअप रिस्टोर करें",
+  "backup.exported": "बैकअप डाउनलोड हो गया",
+  "backup.restored": "बैकअप रिस्टोर हो गया",
+  "backup.merge": "मौजूदा के साथ मिलाएं",
+  "backup.replace": "सब कुछ बदलें",
+  "backup.replaceTitle": "सभी रिज़्यूमे बदलें?",
+  "backup.replaceDesc": "इससे इस फोन के रिज़्यूमे हट जाएंगे और बैकअप वाले आ जाएंगे। इसे वापस नहीं लाया जा सकता।",
+  "backup.restoreTitle": "रिस्टोर कैसे करें?",
+  "backup.invalid": "यह फ़ाइल मान्य बैकअप नहीं है।",
+  "backup.notJson": "यह फ़ाइल JSON बैकअप नहीं है।",
+  "backup.empty": "इस बैकअप में कोई रिज़्यूमे नहीं है।",
+  "backup.failed": "बैकअप फ़ाइल पढ़ी नहीं जा सकी।",
 };
 
 const mr: Dict = {
@@ -799,6 +831,22 @@ const mr: Dict = {
   "lang.en": "English",
   "lang.hi": "हिंदी",
   "lang.mr": "मराठी",
+
+  "backup.title": "बॅकअप आणि रिस्टोअर",
+  "backup.desc": "तुमची सर्व रिझ्युमे आणि कव्हर लेटरची प्रत डाउनलोड करा, किंवा दुसऱ्या फोनवर पुन्हा आणा.",
+  "backup.export": "बॅकअप डाउनलोड करा",
+  "backup.import": "बॅकअप रिस्टोअर करा",
+  "backup.exported": "बॅकअप डाउनलोड झाला",
+  "backup.restored": "बॅकअप रिस्टोअर झाला",
+  "backup.merge": "सध्याच्यासोबत जोडा",
+  "backup.replace": "सर्व बदला",
+  "backup.replaceTitle": "सर्व रिझ्युमे बदलायची?",
+  "backup.replaceDesc": "यामुळे या फोनवरील रिझ्युमे काढली जातील आणि बॅकअपमधील येतील. हे पुन्हा मिळवता येणार नाही.",
+  "backup.restoreTitle": "रिस्टोअर कसे करायचे?",
+  "backup.invalid": "ही फाइल वैध बॅकअप नाही.",
+  "backup.notJson": "ही फाइल JSON बॅकअप नाही.",
+  "backup.empty": "या बॅकअपमध्ये कोणतेही रिझ्युमे नाही.",
+  "backup.failed": "बॅकअप फाइल वाचता आली नाही.",
 };
 
 export const dictionaries: Record<Lang, Dict> = { en, hi, mr };

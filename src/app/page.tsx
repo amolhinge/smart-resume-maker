@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell, PageContainer } from "@/components/app/AppShell";
+import { BackupCard } from "@/components/app/BackupCard";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -414,6 +415,8 @@ export default function DashboardPage() {
             </div>
           </div>
         </section>
+
+        <BackupCard />
       </PageContainer>
 
       <AlertDialog open={Boolean(pendingDelete)} onOpenChange={(o) => !o && setPendingDelete(null)}>

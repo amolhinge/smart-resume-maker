@@ -32,6 +32,10 @@ interface StoreValue {
   duplicate: (id: string) => Resume | null;
   get: (id: string) => Resume | undefined;
   flush: () => void;
+  restore: (
+    incoming: Resume[],
+    mode: "merge" | "replace",
+  ) => { added: number; updated: number; total: number };
 }
 
 const StoreContext = React.createContext<StoreValue | null>(null);
@@ -159,6 +163,35 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [resumes, lang]);
 
+  const restore = React.useCallback(
+    (incoming: Resume[], mode: "merge" | "replace") => {
+      if (mode === "replace") {
+        setResumes(incoming);
+        return { added: incoming.length, updated: 0, total: incoming.length };
+      }
+
+      const byId = new Map(resumes.map((r) => [r.id, r]));
+      let added = 0;
+      let updated = 0;
+      for (const resume of incoming) {
+        const existing = byId.get(resume.id);
+        if (!existing) {
+          byId.set(resume.id, resume);
+          added += 1;
+        } else if ((resume.updatedAt ?? 0) > (existing.updatedAt ?? 0)) {
+          byId.set(resume.id, resume);
+          updated += 1;
+        }
+      }
+      const next = Array.from(byId.values()).sort(
+        (a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0),
+      );
+      setResumes(next);
+      return { added, updated, total: next.length };
+    },
+    [resumes],
+  );
+
   React.useEffect(() => {
     if (!hydrated) return;
     const onHide = () => flush();
@@ -182,6 +215,7 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     duplicate,
     get,
     flush,
+    restore,
   };
 
   return (
