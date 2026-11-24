@@ -118,3 +118,6 @@ $RECYCLE.BIN/
 
 # Temporary review artifacts (generated PDFs for QA), never deployed
 public/review/
+
+# Local repository bundle (temporary download artifact, never committed)
+*.bundle
